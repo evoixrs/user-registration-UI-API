@@ -4,11 +4,23 @@ import pytest
 from api_client.client import StoreClient
 from api_client.models.register import RegisterModel
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+
 logger = logging.getLogger("api_tests")
 
 def pytest_addoption(parser):
      parser.addoption("--api-url", action="store", default="http://127.0.0.1:5000/",
-                      help="foo: bar or baz")
+                      help="Base API URL for tested service")
+     parser.addoption("--headless", action="store_true",
+                      help="Run browser in headless mode")
+
+
+@pytest.fixture(scope="session")
+def base_url(request):
+    return request.config.getoption("--api-url")
+    """Получаем адрес стенда из параметра запуска pytest"""
 
 @pytest.fixture(scope="session")
 def api_client(request):
