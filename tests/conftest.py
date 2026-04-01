@@ -104,3 +104,30 @@ def wait(driver):
 def login_page(driver, wait):
     return LoginPage(driver, wait)
     """Создаем page object страницы логина поверх уже готового driver"""
+
+
+from pages.add_user_page import AddUserPage
+from pages.login_page import LoginPage
+
+
+@pytest.fixture
+def login_page(driver, wait):
+    """
+    Создаем page object страницы логина.
+
+    Эту фикстуру используют тесты,
+    которым нужен сценарий авторизации через UI.
+    """
+    return LoginPage(driver, wait)
+
+
+@pytest.fixture
+def add_user_page(driver, wait):
+    """
+    Создаем page object страницы добавления пользователя.
+
+    Фикстуру размещаем в conftest.py,
+    чтобы она была доступна из разных тестовых файлов
+    без дублирования кода.
+    """
+    return AddUserPage(driver, wait)

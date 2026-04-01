@@ -1,3 +1,6 @@
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
 from locators.user_form_locators import AdminLoginLocators
 from pages.base_page import BasePage
 
@@ -55,26 +58,31 @@ class LoginPage(BasePage):
         self.click_login_button()
         return self
 
-    def get_success_message(self):
-        """
-        Получаем текст успешного сообщения.
-        """
-        return self.text(locator=AdminLoginLocators.RESULT_MESSAGE)
-
     def get_error_message(self):
         """
         Получаем текст сообщения об ошибке.
         """
         return self.text(locator=AdminLoginLocators.RESULT_MESSAGE_ERR)
 
-    def check_success_message(self, expected_text):
-        """
-        Сравниваем фактический успешный текст с ожидаемым.
-        """
-        return self.get_success_message() == expected_text
-
     def check_error_message(self, expected_text):
         """
         Сравниваем фактический текст ошибки с ожидаемым.
         """
         return self.get_error_message() == expected_text
+
+    def get_current_url(self):
+        """
+        Получаем текущий URL страницы.
+        """
+        return self.driver.current_url
+
+    def is_users_page_opened(self):
+        """
+        Проверяем, что после успешного входа
+        открылась страница списка пользователей.
+        """
+        try:
+            self.wait.until(EC.url_contains("/users"))
+            return True
+        except TimeoutException:
+            return False
