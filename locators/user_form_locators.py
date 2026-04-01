@@ -1,9 +1,10 @@
 from selenium.webdriver.common.by import By
 
 
-class AdminloginLocators:
+class AdminLoginLocators:
 
     """Локаторы формы входа"""
+    LOGIN_NAV_BUTTON = (By.CSS_SELECTOR, 'a[href="/login"]')
     LOGIN = (By.ID, 'loginField')
     PASSWORD = (By.ID, 'passwordField')
     LOGIN_BUTTON = (By.ID, 'add-btn')

@@ -8,6 +8,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
+from pages.login_page import LoginPage
+
 logger = logging.getLogger("api_tests")
 
 def pytest_addoption(parser):
@@ -49,3 +51,40 @@ def registered_user(api_client):
     return body
     """Возвращает логин и пароль"""
 
+@pytest.fixture
+def driver(request, base_url):
+    is_headless = request.config.getoption("--headless")
+    """Получаем headless из параметров запуска pytest"""
+
+    chrome_options = Options()
+    chrome_options.add_argument("--start-maximized")
+    chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    """Настраиваем параметры запуска Chrome"""
+
+    if is_headless:
+        chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--window-size=1920,1080")
+    """Если передан флаг --headless, запускаем браузер без UI"""
+
+    logger.info("Start app on url %s, headless is %s", base_url, is_headless)
+
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.get(base_url)
+    """Открываем стартовую страницу"""
+    yield driver
+
+    logger.info("Stop browser")
+    driver.quit()
+    """Закрыть браузер после завершения теста"""
+
+@pytest.fixture
+def wait(driver):
+    return WebDriverWait(driver, 10)
+    """Возвращаем объект для явных ожиданий элементов и состояний страницы"""
+
+@pytest.fixture
+def login_page(driver, wait):
+    return LoginPage(driver, wait)
+    """Создаем page object страницы логина поверх уже готового driver"""
