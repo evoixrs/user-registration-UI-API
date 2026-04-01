@@ -51,6 +51,7 @@ def registered_user(api_client):
     return body
     """Возвращает логин и пароль"""
 
+
 @pytest.fixture
 def driver(request, base_url):
     is_headless = request.config.getoption("--headless")
@@ -73,6 +74,21 @@ def driver(request, base_url):
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(base_url)
     """Открываем стартовую страницу"""
+
+@pytest.fixture
+def driver(request, base_url):
+    options = Options()
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-notifications")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    if request.config.getoption("--headless"):
+        options.add_argument("--headless=new")
+        options.add_argument("--window-size=1920,1080")
+
+    driver = webdriver.Chrome(options=options)
+    driver.get(base_url)
     yield driver
 
     logger.info("Stop browser")
